@@ -25,7 +25,7 @@
 
 ## <img src="https://media.giphy.com/media/iY8CRBdQXODJSCERIr/giphy.gif" width="32"> About CodeFlow
 
-<img align="right" alt="Coding GIF" width="380" src="https://user-images.githubusercontent.com/74038190/229223263-cf2e4b07-2615-4f87-9c38-e37600f8381a.gif"/>
+<img align="right" alt="CodeFlow Development" width="380" src="./Development.svg" />
 
 ```yaml
 Project Name   : CodeFlow 🛠️⚡
@@ -50,24 +50,24 @@ It combines a **VS Code-grade in-browser editor** with isolated multi-language e
 ```mermaid
 flowchart TD
     subgraph Client ["Client Layer"]
-        User[Browser Client / Monaco IDE]
+        User["Browser Client / Monaco IDE"]
     end
 
     subgraph Infra ["Edge & Load Balancing"]
-        NGINX["NGINX Reverse Proxy / Load Balancer\n(ip_hash Sticky Sessions)"]
+        NGINX["NGINX Reverse Proxy / Load Balancer<br/>(ip_hash Sticky Sessions)"]
     end
 
     subgraph AppCluster ["Backend Application Cluster (PM2)"]
-        PM2_1[Express Worker Process 1]
-        PM2_2[Express Worker Process 2]
-        PM2_N[Express Worker Process N]
+        PM2_1["Express Worker Process 1"]
+        PM2_2["Express Worker Process 2"]
+        PM2_N["Express Worker Process N"]
     end
 
     subgraph Services ["Backend Ecosystem & Storage"]
-        MongoDB[(MongoDB Database\nUsers & Workspaces)]
-        Redis[(Redis Data Store\nBullMQ Queue & Socket.io Adapter)]
-        Docker[Docker Execution Sandbox\n(Python, JS, C++, Java Containers)]
-        Gemini[Google Gemini 2.5 Flash\nAI Code Review Engine]
+        MongoDB[("MongoDB Database<br/>Users & Workspaces")]
+        Redis[("Redis Data Store<br/>BullMQ Queue & Socket.io Adapter")]
+        Docker["Docker Execution Sandbox<br/>(Python, JS, C++, Java Containers)"]
+        Gemini["Google Gemini 2.5 Flash<br/>AI Code Review Engine"]
     end
 
     User <-->|HTTPS / WebSockets| NGINX
