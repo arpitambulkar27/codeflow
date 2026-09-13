@@ -22,7 +22,7 @@
 
 ## 👨‍💻 About Me
 
-<img align="right" alt="Coding Workspace" width="340" src="Coding.svg" />
+<img align="right" alt="Coding Workspace" width="360" src="https://raw.githubusercontent.com/arpitambulkar27/codeflow/main/Coding.svg" />
 
 ```yaml
 Name     : Arpit Ambulkar
