@@ -189,19 +189,30 @@ router.post("/google", authRateLimiter, validateBody(authSchemas.googleAuth), as
       });
     }
 
-    const googleClient = new OAuth2Client(clientId);
+    const audiences = clientId
+      .split(",")
+      .map((id) => id.trim().replace(/^["']|["']$/g, ""))
+      .filter(Boolean);
+
+    const googleClient = new OAuth2Client(audiences[0]);
 
     // Verify ID token with Google
     let ticket;
     try {
       ticket = await googleClient.verifyIdToken({
         idToken: credential,
-        audience: clientId,
+        audience: audiences.length === 1 ? audiences[0] : audiences,
       });
     } catch (verifyError) {
       console.error("Google ID Token Verification Error:", verifyError.message || verifyError);
+      const msg = verifyError.message || "";
+      if (msg.includes("recipient") || msg.includes("audience")) {
+        return res.status(401).json({
+          error: "Google sign-in failed: Client ID mismatch between frontend (Vercel) and backend (Render). Ensure VITE_GOOGLE_CLIENT_ID on Vercel matches GOOGLE_CLIENT_ID on Render.",
+        });
+      }
       return res.status(401).json({
-        error: `Google sign-in failed: ${verifyError.message || "Token validation error."}`,
+        error: `Google sign-in failed: ${msg || "Token validation error."}`,
       });
     }
 
