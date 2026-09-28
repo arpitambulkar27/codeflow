@@ -44,4 +44,9 @@ const executionQueue = new Queue("code-execution", {
   connection: redisConnection,
 });
 
+executionQueue.on("error", (err) => {
+  if (err.code === "ECONNREFUSED" || err.message?.includes("Connection is closed")) return;
+  console.warn("⚠️ BullMQ Queue Warning:", err.message);
+});
+
 module.exports = { executionQueue, redisConnection };

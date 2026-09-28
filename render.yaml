@@ -1,0 +1,25 @@
+# render.yaml - Render Blueprint Deployment Configuration for CodeFlow
+services:
+  - type: web
+    name: codeflow-backend
+    env: node
+    region: singapore # or oregon, frankfurt, etc.
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node src/index.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: CODE_EXECUTION_PROVIDER
+        value: sandboxapi # Recommended for Render (Docker daemon unavailable in Render Web Services)
+      - key: MONGO_URI
+        sync: false # Set in Render Dashboard (e.g. mongodb+srv://...)
+      - key: JWT_SECRET
+        generateValue: true # Render automatically generates a secure 256-bit secret if not provided
+      - key: SANDBOXAPI_RAPIDAPI_KEY
+        sync: false # Set in Render Dashboard (Free key from rapidapi.com/sandboxapidev/api/sandboxapi)

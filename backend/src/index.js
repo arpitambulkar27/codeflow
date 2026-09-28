@@ -9,8 +9,9 @@ const cors = require("cors");
 // Import MongoDB connection
 const connectDB = require("./config/db");
 
-// Import Worker & Routes
+// Import Worker, Middleware & Routes
 const { initExecutionWorker } = require("../workers/executionWorker");
+const errorHandler = require("./middleware/errorHandler");
 const runRoutes = require("./routes/run");
 const aiRoutes = require("./routes/ai");
 const authRoutes = require("./routes/auth");
@@ -58,6 +59,9 @@ app.use("/api/ai", aiRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/problems", problemRoutes);
+
+// Centralized Error Handling Middleware
+app.use(errorHandler);
 
 // Socket.io Setup
 const io = new Server(server, {
@@ -177,4 +181,13 @@ initExecutionWorker(io);
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`🚀 CodeWorkspace backend running on http://localhost:${PORT}`);
+});
+
+// Process-level Crash Prevention Handlers
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("⚠️ Unhandled Promise Rejection:", reason?.stack || reason?.message || reason);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("❌ Uncaught Fatal Exception:", error?.stack || error?.message || error);
 });

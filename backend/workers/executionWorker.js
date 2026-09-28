@@ -63,6 +63,11 @@ function initExecutionWorker(io) {
     console.error(`❌ [Worker] Job ID: ${job.id} failed:`, err.message);
   });
 
+  worker.on("error", (err) => {
+    if (err.code === "ECONNREFUSED" || err.message?.includes("Connection is closed")) return;
+    console.warn("⚠️ BullMQ Execution Worker Warning:", err.message);
+  });
+
   return worker;
 }
 
