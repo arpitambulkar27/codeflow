@@ -6,31 +6,31 @@ import { Shield, Lock, Eye, FileCheck } from "lucide-react";
 const securityFeatures = [
   {
     icon: Shield,
-    title: "Isolated execution",
-    description: "Each code run executes inside an isolated Docker container.",
+    title: "Container Isolation",
+    description: "Each code run executes inside an isolated Docker sandbox container.",
     image: "/images/isolated.jpg",
   },
   {
     icon: Lock,
-    title: "Encrypted memory",
-    description: "Data encrypted at rest and in transit.",
+    title: "JWT & OTP Auth",
+    description: "Secure 6-digit OTP verification and JWT token authorization.",
     image: "/images/encrypted.jpg",
   },
   {
     icon: Eye,
-    title: "Full audit trails",
-    description: "Every action logged and inspectable.",
+    title: "Payload Validation",
+    description: "Strict Joi schema validation on incoming API request payloads.",
     image: "/images/audit.jpg",
   },
   {
     icon: FileCheck,
-    title: "Permission boundaries",
-    description: "Principle of least privilege by design.",
+    title: "Rate Limiting",
+    description: "Express rate limiters prevent API abuse and token exhaustion.",
     image: "/images/permissions.jpg",
   },
 ];
 
-const certifications = ["SOC 2", "ISO 27001", "HIPAA", "GDPR"];
+const securityBadges = ["JWT Auth", "Joi Schema Validation", "6-Digit OTP", "Docker Sandbox"];
 
 export function SecuritySection() {
   const [isVisible, setIsVisible] = useState(false);
@@ -84,7 +84,7 @@ export function SecuritySection() {
             isVisible ? "opacity-100" : "opacity-0"
           }`}>
             <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl">
-              Your execution environment is secure by default. Joi schema validation, Postman shielding, and 10k token caps keep your workspace protected.
+              Your execution environment is secure by default. Joi schema validation, Express rate limiting, and JWT token authorization keep your workspace protected.
             </p>
           </div>
         </div>
@@ -111,22 +111,22 @@ export function SecuritySection() {
             <div className="relative z-10">
               <span className="font-mono text-sm text-muted-foreground">Active protection</span>
               <div className="mt-8">
-                <span className="text-7xl lg:text-8xl font-display">0</span>
-                <span className="block text-muted-foreground mt-2">Security incidents this year</span>
+                <span className="text-6xl lg:text-7xl font-display">100%</span>
+                <span className="block text-muted-foreground mt-2">Isolated Docker Sandboxing</span>
               </div>
             </div>
             
-            {/* Certification badges */}
+            {/* Security badges */}
             <div className="absolute bottom-8 left-8 right-8 flex flex-wrap gap-2">
-              {certifications.map((cert, index) => (
+              {securityBadges.map((badge, index) => (
                 <span
-                  key={cert}
+                  key={badge}
                   className={`px-3 py-1 border border-foreground/10 text-xs font-mono text-muted-foreground transition-all duration-500 ${
                     isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                   }`}
                   style={{ transitionDelay: `${index * 100 + 300}ms` }}
                 >
-                  {cert}
+                  {badge}
                 </span>
               ))}
             </div>

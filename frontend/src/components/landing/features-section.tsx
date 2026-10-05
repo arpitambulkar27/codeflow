@@ -22,7 +22,7 @@ const features = [
     number: "03",
     title: "DSA Sheet & Practice",
     description: "Curated Data Structures & Algorithms sheets and problem sets. Practice problem-solving with automated test case evaluation.",
-    stats: { value: "100+", label: "Curated Problems" },
+    stats: { value: "1,000+", label: "Curated Problems" },
     icon: FileCode2,
   },
   {

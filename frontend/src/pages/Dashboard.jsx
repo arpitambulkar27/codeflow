@@ -486,7 +486,7 @@ const Dashboard = () => {
                   <Target size={20} color="#eca8d6" />
                 </div>
                 <div className="font-display text-2xl text-white">
-                  Striver & Babbar Sheets
+                  Curated DSA Sheets
                 </div>
                 <div style={{ fontSize: "12px", color: "#8b949e", marginTop: "14px" }} className="font-mono">
                   Browse curated roadmaps & solve &rarr;
@@ -542,8 +542,8 @@ const Dashboard = () => {
                     {filteredWorkspaces.map((ws) => {
                       const langLabel = getLanguageLabel(ws.language);
                       const updatedDate = new Date(ws.updatedAt || Date.now()).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-                      const fileCount = Array.isArray(ws.files) && ws.files.length > 0 ? ws.files.length : 1;
-                      const folderCount = Array.isArray(ws.files) ? ws.files.filter(f => f.type === "folder").length : 0;
+                      const filesArray = Array.isArray(ws.files) ? ws.files.filter(f => f.type !== "folder") : [];
+                      const fileCount = filesArray.length > 0 ? filesArray.length : 1;
 
                       return (
                         <div 
@@ -560,21 +560,13 @@ const Dashboard = () => {
                               <div style={{ fontSize: "15px", fontWeight: "600", color: "#ffffff", marginBottom: "4px" }}>{ws.title}</div>
                               <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
                                 <span style={{ fontSize: "12px", color: "#eca8d6", fontFamily: "monospace", fontWeight: "600" }}>{langLabel}</span>
-                                <span style={{ fontSize: "12px", color: "#8b949e" }}>• {fileCount} file(s), {folderCount} folder(s)</span>
+                                <span style={{ fontSize: "12px", color: "#8b949e" }}>• {fileCount} {fileCount === 1 ? "file" : "files"}</span>
                                 <span style={{ fontSize: "12px", color: "#8b949e" }}>• Updated {updatedDate}</span>
                               </div>
                             </div>
                           </div>
 
                           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                            <button 
-                              onClick={(e) => handleForkWorkspace(e, ws._id)}
-                              className="cd-btn-outline"
-                              style={{ padding: "6px 12px", fontSize: "11px" }}
-                              title="Fork Workspace"
-                            >
-                              <GitFork size={13} /> Fork
-                            </button>
                             <button 
                               onClick={(e) => handleDeleteWorkspace(e, ws._id)}
                               style={{ background: "rgba(239, 68, 68, 0.15)", border: "1px solid rgba(239, 68, 68, 0.25)", color: "#f87171", borderRadius: "9999px", padding: "6px 10px", fontSize: "11px", cursor: "pointer" }}
@@ -612,34 +604,30 @@ const Dashboard = () => {
                       <span style={{ color: telemetry?.database?.mongoDB === "Connected" ? "#eca8d6" : "#f87171", fontWeight: "700" }}>● {telemetry?.database?.mongoDB || "Connected"}</span>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span style={{ color: "#8b949e" }}>Document Store:</span>
-                      <span style={{ color: "#ffffff", fontWeight: "600" }}>{telemetry?.database?.documentStore || "Active"}</span>
+                      <span style={{ color: "#8b949e" }}>Total Workspaces:</span>
+                      <span style={{ color: "#ffffff", fontWeight: "600" }}>{telemetry?.database?.totalWorkspaces ?? filteredWorkspaces.length}</span>
                     </div>
                   </div>
 
-                  {/* 2. Redis & Rate Limiter */}
+                  {/* 2. Redis Cache */}
                   <div style={{ padding: "12px", backgroundColor: "rgba(0, 0, 0, 0.4)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "12px" }}>
-                    <div style={{ fontSize: "10px", color: "#8b949e", fontFamily: "monospace", fontWeight: "700", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "6px" }}>QUEUE & RATE LIMITER</div>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
-                      <span style={{ color: "#8b949e" }}>Redis Connected:</span>
-                      <span style={{ color: telemetry?.database?.redis === "Connected" ? "#eca8d6" : "#f87171", fontWeight: "700" }}>● {telemetry?.database?.redis || "Connected"}</span>
-                    </div>
+                    <div style={{ fontSize: "10px", color: "#8b949e", fontFamily: "monospace", fontWeight: "700", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "6px" }}>CACHE & QUEUE</div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span style={{ color: "#8b949e" }}>Redis Rate Limiter:</span>
-                      <span style={{ color: "#ffffff", fontWeight: "600" }}>{telemetry?.database?.rateLimiter || "10 runs / min"}</span>
+                      <span style={{ color: "#8b949e" }}>Redis Status:</span>
+                      <span style={{ color: telemetry?.database?.redis === "Connected" ? "#eca8d6" : "#8b949e", fontWeight: "700" }}>● {telemetry?.database?.redis || "Offline"}</span>
                     </div>
                   </div>
 
-                  {/* 3. Docker Sandbox & Isolation */}
+                  {/* 3. Server Process Runtime */}
                   <div style={{ padding: "12px", backgroundColor: "rgba(0, 0, 0, 0.4)", border: "1px solid rgba(255, 255, 255, 0.1)", borderRadius: "12px" }}>
-                    <div style={{ fontSize: "10px", color: "#8b949e", fontFamily: "monospace", fontWeight: "700", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "6px" }}>DOCKER SANDBOX & ISOLATION</div>
+                    <div style={{ fontSize: "10px", color: "#8b949e", fontFamily: "monospace", fontWeight: "700", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "6px" }}>SERVER METRICS</div>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
-                      <span style={{ color: "#8b949e" }}>Docker Sandbox Cap:</span>
-                      <span style={{ color: "#ffffff", fontWeight: "600" }}>{telemetry?.sandbox?.dockerCap || "128MB / 0.5 CPU"}</span>
+                      <span style={{ color: "#8b949e" }}>Memory RSS:</span>
+                      <span style={{ color: "#ffffff", fontWeight: "600" }}>{telemetry?.system?.memoryUsageMB ? `${telemetry.system.memoryUsageMB} MB` : "Active"}</span>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span style={{ color: "#8b949e" }}>Hardened Isolation:</span>
-                      <span style={{ color: "#eca8d6", fontWeight: "600" }}>{telemetry?.sandbox?.isolation || "Active (Isolated)"}</span>
+                      <span style={{ color: "#8b949e" }}>Server Uptime:</span>
+                      <span style={{ color: "#eca8d6", fontWeight: "600" }}>{telemetry?.system?.uptimeSeconds ? `${telemetry.system.uptimeSeconds}s` : "Active"}</span>
                     </div>
                   </div>
 

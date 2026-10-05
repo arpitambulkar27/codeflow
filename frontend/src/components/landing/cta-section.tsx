@@ -58,7 +58,7 @@ export function CtaSection() {
                 </h2>
 
                 <p className="text-xl text-muted-foreground mb-12 leading-relaxed max-w-xl">
-                  Join thousands of developers writing, executing, and reviewing code in the cloud with CodeFlow IDE. Deploy your first sandbox in seconds.
+                  Write, execute, and review code in your browser with CodeFlow IDE. Start coding instantly in seconds with zero setup.
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-start gap-4">
@@ -83,7 +83,7 @@ export function CtaSection() {
                 </div>
 
                 <p className="text-sm text-muted-foreground mt-8 font-mono">
-                  500 free code executions on signup
+                  100% Free & Open Source — No installation required
                 </p>
               </div>
 

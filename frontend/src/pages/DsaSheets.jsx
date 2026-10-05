@@ -558,7 +558,7 @@ export default function DsaSheets() {
                   transition: "all 0.2s ease"
                 }}
               >
-                <BookOpen size={15} /> Striver A2Z Sheet
+                <BookOpen size={15} /> A2Z DSA Roadmap
               </button>
 
               <button
@@ -582,7 +582,7 @@ export default function DsaSheets() {
                   transition: "all 0.2s ease"
                 }}
               >
-                <Flame size={15} /> Love Babbar 450
+                <Flame size={15} /> Top 450 DSA Sheet
               </button>
             </div>
           </div>
