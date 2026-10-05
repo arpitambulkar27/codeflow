@@ -1,3 +1,4 @@
+const fs = require("fs");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
@@ -59,6 +60,23 @@ app.use("/api/ai", aiRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/problems", problemRoutes);
+
+// Return JSON 404 for unhandled /api/* routes
+app.use("/api/*", (req, res) => {
+  res.status(404).json({ error: "API endpoint not found." });
+});
+
+// Serve Frontend Static Assets & SPA Fallback (for combined Node/Express deployment)
+const frontendDistPath = path.resolve(__dirname, "../../frontend/dist");
+if (fs.existsSync(frontendDistPath)) {
+  app.use(express.static(frontendDistPath));
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api") || req.path === "/health" || req.path === "/metrics") {
+      return next();
+    }
+    res.sendFile(path.join(frontendDistPath, "index.html"));
+  });
+}
 
 // Centralized Error Handling Middleware
 app.use(errorHandler);
