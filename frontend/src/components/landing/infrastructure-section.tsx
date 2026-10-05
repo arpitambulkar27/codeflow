@@ -3,10 +3,10 @@
 import { useEffect, useState, useRef } from "react";
 
 const runtimes = [
-  { name: "Python 3.11", info: "PyZone Sandbox", status: "operational" },
-  { name: "Node.js 20", info: "V8 Engine", status: "operational" },
-  { name: "C++ GCC 13", info: "Native Execution", status: "operational" },
-  { name: "Java JDK 21", info: "JVM Sandbox", status: "operational" },
+  { name: "Python 3.11", info: "Docker Container", status: "operational" },
+  { name: "Node.js 20", info: "Isolated Runtime", status: "operational" },
+  { name: "C++ GCC 13", info: "GCC Compiler Sandbox", status: "operational" },
+  { name: "Java JDK 21", info: "OpenJDK Runtime", status: "operational" },
 ];
 
 export function InfrastructureSection() {
@@ -154,15 +154,15 @@ export function InfrastructureSection() {
             <div className={`p-8 border border-foreground/10 bg-foreground/[0.02] transition-all duration-700 delay-100 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}>
-              <span className="text-5xl lg:text-6xl font-display">99.99%</span>
-              <span className="block text-sm text-muted-foreground mt-2">Execution Uptime SLA</span>
+              <span className="text-5xl lg:text-6xl font-display">100%</span>
+              <span className="block text-sm text-muted-foreground mt-2">Free & Open Source</span>
             </div>
             
             <div className={`p-8 border border-foreground/10 bg-foreground/[0.02] transition-all duration-700 delay-200 ${
               isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}>
-              <span className="text-5xl lg:text-6xl font-display">&lt;45ms</span>
-              <span className="block text-sm text-muted-foreground mt-2">Sandbox spin-up time</span>
+              <span className="text-4xl lg:text-5xl font-display">Isolated</span>
+              <span className="block text-sm text-muted-foreground mt-2">Sandbox Environments</span>
             </div>
           </div>
         </div>

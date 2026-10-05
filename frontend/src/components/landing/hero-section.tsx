@@ -203,11 +203,11 @@ export function HeroSection() {
           isVisible ? "opacity-100" : "opacity-0"
         }`}
       >
-        <div className="max-w-[1400px] mx-auto flex items-start gap-10 lg:gap-20">
+        {/* <div className="max-w-[1400px] mx-auto flex items-start gap-10 lg:gap-20">
           {[
-            { value: "50,000+", label: "code executions run" },
-            { value: "99.9%", label: "sandbox container uptime" },
-            { value: "<45ms", label: "execution latency" },
+            { value: "Your all-in-one Cloud IDE", label: "Languages Supported" },
+            { value: "1,000+", label: "DSA Practice Problems" },
+            { value: "Real-time", label: "Socket.io Collab" },
           ].map((stat) => (
             <div key={stat.label} className="flex flex-col gap-2">
               <span className="text-3xl lg:text-4xl font-display text-white">{stat.value}</span>
@@ -216,7 +216,7 @@ export function HeroSection() {
               </span>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* Scroll indicator */}

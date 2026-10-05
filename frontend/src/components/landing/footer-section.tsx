@@ -12,19 +12,14 @@ const footerLinks = {
   ],
   Developers: [
     { name: "Documentation", href: "#developers" },
-    { name: "Monaco Editor", href: "#" },
-    { name: "API Reference", href: "#developers" },
-    { name: "Status", href: "#" },
+    { name: "Monaco Editor", href: "https://microsoft.github.io/monaco-editor/" },
+    { name: "Status", href: "https://codeflow-m0l3.onrender.com/health" },
   ],
   Company: [
-    { name: "About", href: "#" },
-    { name: "Blog", href: "#" },
-    { name: "Careers", href: "#", badge: "Hiring" },
-    { name: "Contact", href: "#" },
+    { name: "About", href: "https://github.com/arpitambulkar27" },
+    { name: "Contact", href: "https://www.linkedin.com/in/arpit-ambulkar-955842345/" },
   ],
-  Legal: [
-    { name: "Privacy", href: "#" },
-    { name: "Terms", href: "#" },
+  Security: [
     { name: "Security", href: "#security" },
   ],
 };
@@ -102,8 +97,6 @@ export function FooterSection() {
         />
         {/* Gradient fade to black at bottom */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black" />
-        {/* Subtle dark vignette on sides */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/40" />
       </div>
 
       {/* Footer content — black background, white text */}

@@ -4,25 +4,25 @@ import { useEffect, useState, useRef } from "react";
 
 const metrics = [
   { 
-    value: 12847392, 
-    suffix: "", 
+    value: 4, 
+    suffix: "+", 
     prefix: "",
-    label: "Code executions today",
-    sublabel: "across 23,847 sandboxes",
+    label: "Core Languages",
+    sublabel: "Python, JS, C++, Java",
   },
   { 
-    value: 99, 
-    suffix: ".99%", 
+    value: 1000, 
+    suffix: "+", 
     prefix: "",
-    label: "Availability",
-    sublabel: "across all regions",
+    label: "DSA Problems",
+    sublabel: "DSA Sheets",
   },
   { 
-    value: 340, 
-    suffix: "ms", 
-    prefix: "<",
-    label: "Average execution",
-    sublabel: "p99 latency",
+    value: 100, 
+    suffix: "%", 
+    prefix: "",
+    label: "Isolated Sandboxes",
+    sublabel: "Docker & Sandbox API",
   },
 ];
 
@@ -244,7 +244,7 @@ export function MetricsSection() {
 
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
         {/* Header */}
-        <div className="grid lg:grid-cols-12 gap-8 mb-20 lg:mb-32">
+        <div className="grid lg:grid-cols-12 gap-8 mb-12 lg:mb-20">
           <div className="lg:col-span-8 lg:col-start-1">
             <div className="flex items-center gap-4 mb-6">
               <span className="flex items-center gap-2 px-3 py-1 bg-[#eca8d6]/10 text-[#eca8d6] text-xs font-mono">
@@ -265,19 +265,23 @@ export function MetricsSection() {
             </h2>
           </div>
         </div>
+      </div>
 
-        {/* Organic graph image */}
-        <div className={`w-full mb-0 transition-all duration-1000 delay-200 ${
+      {/* Organic graph image — true 100vw edge-to-edge full bleed matching the hands image */}
+      <div
+        className={`relative left-1/2 -translate-x-1/2 w-screen transition-all duration-1000 delay-200 ${
           isVisible ? "opacity-100" : "opacity-0"
-        }`}>
-          <img
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/real-time-graph-INFmn3u0MlUwvNPynoIhwxtPaPjxM5.png"
-            alt=""
-            aria-hidden="true"
-            className="w-full h-auto object-cover"
-          />
-        </div>
+        }`}
+      >
+        <img
+          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/real-time-graph-INFmn3u0MlUwvNPynoIhwxtPaPjxM5.png"
+          alt="Real-time plant graph"
+          aria-hidden="true"
+          className="w-full h-auto object-cover block"
+        />
+      </div>
 
+      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12 mt-12">
         {/* Metrics grid */}
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Large metric */}
