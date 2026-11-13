@@ -48,35 +48,35 @@ It combines a **VS Code-grade in-browser editor** with isolated multi-language e
 ## 🏛️ System Architecture
 
 ```mermaid
-flowchart TD
-    subgraph Client ["Client Layer"]
-        User["Browser Client / Monaco IDE"]
-    end
-
-    subgraph Infra ["Edge & Load Balancing"]
-        NGINX["NGINX Reverse Proxy / Load Balancer<br/>(ip_hash Sticky Sessions)"]
-    end
-
-    subgraph AppCluster ["Backend Application Cluster (PM2)"]
-        PM2_1["Express Worker Process 1"]
-        PM2_2["Express Worker Process 2"]
-        PM2_N["Express Worker Process N"]
-    end
-
-    subgraph Services ["Backend Ecosystem & Storage"]
-        MongoDB[("MongoDB Database<br/>Users & Workspaces")]
-        Redis[("Redis Data Store<br/>BullMQ Queue & Socket.io Adapter")]
-        Docker["Docker Execution Sandbox<br/>(Python, JS, C++, Java Containers)"]
-        Gemini["Google Gemini 2.5 Flash<br/>AI Code Review Engine"]
-    end
-
-    User <-->|HTTPS / WebSockets| NGINX
-    NGINX <--> PM2_1 & PM2_2 & PM2_N
-    PM2_1 & PM2_2 & PM2_N <--> MongoDB
-    PM2_1 & PM2_2 & PM2_N <--> Redis
-    PM2_1 & PM2_2 & PM2_N <--> Docker
-    PM2_1 & PM2_2 & PM2_N <--> Gemini
+flowchart LR
+    Client["Client (Browser / Monaco IDE)"] -->|"POST /api/run"| API["API (Express.js)"]
+    API -->|"Enqueue Job"| Queue["BullMQ / Redis"]
+    Queue -->|"Process Job"| Worker["Worker (BullMQ Worker)"]
+    Worker -->|"Execute"| Sandbox["Docker Sandbox (or External Provider)"]
+    Client -.->|"Poll Status / WebSocket"| API
 ```
+
+---
+
+## 📊 Benchmarks & Performance
+
+### Execution Pipeline Benchmark
+
+| Architecture / Path | Language | Workload & Concurrency | Test Runs | Throughput | Enqueue Latency | End-to-End Latency | Reliability & Errors |
+| :--- | :--- | :--- | :---: | :--- | :--- | :--- | :--- |
+| **Direct (synchronous) path** | Python | 50 users, 60s | 1 run | 4.85 jobs/s | N/A (blocking) | p95 9.75s | 39 execution timeouts |
+| **Queued path** | Python | 50 users, 60s, worker concurrency 8 | 2 runs | 4.95 jobs/s avg | p95 ~132ms | e2e p95 ~14.9s | 0 timeouts, 0 errors |
+| **Queued path** | JavaScript | 25 users, 60s, concurrency 8 and 12 | 4 runs total | 6.1-7.0 jobs/s | p50 ~25-35ms | e2e p95 4.3-7.3s | 0 errors across 1,537 jobs |
+
+**Methodology:** single laptop (12-core i5-12500H, 16GB, Windows 11 + Docker Desktop/WSL2), k6 running on the same machine, 2 runs per config.
+
+---
+
+## ⚠️ Limitations
+
+* DSA submit endpoint still runs test cases synchronously outside the queue;
+* Under heavy load latency grows instead of requests failing;
+* Live demo uses an external execution API because Render has no Docker daemon, while benchmarks ran on local Docker.
 
 ---
 

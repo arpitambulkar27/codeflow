@@ -79,11 +79,19 @@ const createRateLimiter = ({
 };
 
 // Preset limiters for sensitive endpoints
-const runRateLimiter = createRateLimiter({
+const baseRunRateLimiter = createRateLimiter({
   windowMs: 60000, // 1 minute
   maxRequests: 10,  // Max 10 runs per minute
   message: "Rate limit exceeded: Max 10 code executions per minute allowed.",
 });
+
+const runRateLimiter = (req, res, next) => {
+  // Relax rate limit ONLY for benchmarking when explicitly requested and not in production
+  if (process.env.DISABLE_RUN_RATE_LIMIT === "true" && process.env.NODE_ENV !== "production") {
+    return next();
+  }
+  return baseRunRateLimiter(req, res, next);
+};
 
 const aiRateLimiter = createRateLimiter({
   windowMs: 60000, // 1 minute

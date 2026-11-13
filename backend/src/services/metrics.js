@@ -25,8 +25,8 @@ const executionDurationHistogram = new client.Histogram({
 // 3. Execution Failures Counter
 const executionFailureCounter = new client.Counter({
   name: "codeworkspace_execution_failures_total",
-  help: "Total number of code execution failures by language and error type",
-  labelNames: ["language", "error_type"],
+  help: "Total number of code execution failures by language and reason",
+  labelNames: ["language", "reason"],
 });
 
 // 4. Active WebSockets Connections Gauge
