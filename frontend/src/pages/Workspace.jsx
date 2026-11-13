@@ -6,6 +6,7 @@ import { io } from "socket.io-client";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { API_BASE_URL } from "../config/api";
+import { executeCodeJob } from "../services/executionService";
 import {
   Play,
   Bot,
@@ -93,6 +94,10 @@ export default function Workspace() {
   const [stdinInput, setStdinInput] = useState("");
   const [output, setOutput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [runButtonText, setRunButtonText] = useState("Run Code");
+  const localRunActiveRef = useRef(false);
+  const runInFlightRef = useRef(false);
+  const abortControllerRef = useRef(null);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [connectedUsers, setConnectedUsers] = useState(1);
@@ -151,6 +156,15 @@ export default function Workspace() {
   useEffect(() => {
     languageRef.current = language;
   }, [language]);
+
+  // Cleanup in-flight execution polling on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   // Handle Problem Panel Resizing (Horizontal Width)
   const handleMouseDownProblemResize = (e) => {
@@ -505,6 +519,9 @@ export default function Workspace() {
     });
 
     socket.on("execution-result", (data) => {
+      // If this client initiated the run, ignore socket event to prevent duplicate render (polling handles it)
+      if (localRunActiveRef.current) return;
+
       setIsLoading(false);
       setActiveTab("output");
 
@@ -699,36 +716,76 @@ export default function Workspace() {
     }
   };
 
-  // Run Code Execution inside Docker Sandbox
+  // Run Code Execution inside Docker Sandbox via BullMQ Queue
   const handleRunCode = async () => {
+    // Synchronous guard against rapid clicks stacking jobs; ignore subsequent clicks
+    if (runInFlightRef.current) return;
+    runInFlightRef.current = true;
+    localRunActiveRef.current = true;
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     setIsLoading(true);
+    setRunButtonText("Queued...");
     setActiveTab("output");
-    setOutput("⏳ Dispatching job to Docker sandbox...");
+    setOutput("⏳ Job queued in execution runner...");
 
     try {
-      const res = await axios.post(`${API_BASE_URL}/api/run`, {
-        language,
-        code,
-        stdin: stdinInput,
-        stdinInput,
-        roomId: roomParam,
-        roomCode: roomParam,
-      });
-
-      if (res.data && res.data.status === "completed") {
-        setIsLoading(false);
-        const outStr = res.data.output || res.data.stdout;
-        const errStr = res.data.stderr;
-        if (errStr && errStr.trim() !== "") {
-          setOutput(`Execution Output:\n${outStr || ""}\n\nErrors:\n${errStr}`);
-        } else {
-          setOutput(outStr || "Program executed successfully with no stdout output.");
+      const result = await executeCodeJob(
+        {
+          language,
+          code,
+          stdin: stdinInput,
+          stdinInput,
+          roomId: roomParam,
+          roomCode: roomParam,
+        },
+        {
+          signal: abortController.signal,
+          onStateChange: (state) => {
+            if (state === "waiting") {
+              setRunButtonText("Queued...");
+              setOutput("⏳ Job queued in execution runner...");
+            } else if (state === "active") {
+              setRunButtonText("Running...");
+              setOutput("🚀 Executing in Docker sandbox...");
+            }
+          },
         }
+      );
+
+      const outStr = result.output || result.stdout;
+      const errStr = result.stderr;
+      if (errStr && errStr.trim() !== "") {
+        setOutput(`Execution Output:\n${outStr || ""}\n\nErrors:\n${errStr}`);
+      } else {
+        setOutput(outStr || "Program executed successfully with no stdout output.");
       }
     } catch (error) {
-      setIsLoading(false);
-      const errMsg = error.response?.data?.error || "Error executing code in Docker container runner.";
+      if (
+        axios.isCancel(error) ||
+        error.name === "AbortError" ||
+        error.name === "CanceledError" ||
+        error.message === "aborted"
+      ) {
+        return;
+      }
+      const errMsg =
+        error.response?.data?.error ||
+        error.message ||
+        "Error executing code in Docker container runner.";
       setOutput(`Execution Error:\n${errMsg}`);
+    } finally {
+      if (!abortController.signal.aborted) {
+        runInFlightRef.current = false;
+        localRunActiveRef.current = false;
+        setIsLoading(false);
+        setRunButtonText("Run Code");
+      }
     }
   };
 
@@ -1115,7 +1172,7 @@ export default function Workspace() {
               {isLoading ? (
                 <>
                   <Loader2 size={14} className="animate-spin" />
-                  <span>Running...</span>
+                  <span>{runButtonText}</span>
                 </>
               ) : (
                 <>
